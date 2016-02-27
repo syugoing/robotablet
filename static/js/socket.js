@@ -3,6 +3,7 @@ var socket = new WebSocket(url);
 var retry_attempts = 0;
 var max_retry_attempts = 120;
 var $message = $('#message');
+var $iframe = $('#iframe');
 
 console.log(url);
 
@@ -22,6 +23,7 @@ socket.onopen = function() {
 
   $message.attr('class', 'label label-success');
   $message.text('open');
+  $iframe.attr('src', null)
 
 };
 
@@ -30,12 +32,19 @@ socket.onopen = function() {
 socket.onmessage = function(event) {
   console.log('onmessage');
 
-  $message.attr('class', 'label label-primary');
-
   var json = JSON.parse(event.data);
   console.log(json);
+  var mode = json.mode
+  var image = json.image
 
+  $message.attr('class', 'label label-primary');
   $message.text('recieved');
+
+  if (mode == "show_image") {
+      $iframe.attr('src', '/iframe?mode=' + mode + '&image=' + image)
+  } else {
+      $iframe.attr('src', '/iframe?mode=' + mode)
+  }
 
   // reset the tries back to 0 since we have a new connection opened.
   retry_attempts = 0;
@@ -54,7 +63,7 @@ socket.onclose = function(event) {
     // Connection has closed so try to reconnect.
     retry_attempts++;
     socket = null;
-    //    start();
+    // start();
     console.log("retry_attempts: ", retry_attempts);
 
   } else {

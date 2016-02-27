@@ -1,28 +1,34 @@
-{% extends "base.html" %}
+<!DOCTYPE html >
+<html lang='ja'>
 
-{% block title %}
-top
-{% end %}
+<head>
 
-{% block style_block %}
+  <title>tablet frame</title>
+  <meta charset='utf-8'>
+
+  <link rel="shortcut icon" href="{{ static_url('img/favicon.ico') }}" />
+
   <link type="text/css" rel="stylesheet" href="{{ static_url('css/tablet.css') }}"/>
-  <link type="text/css" rel="stylesheet" href="{{ static_url('css/show_menu.css') }}"/>
-{% end %}
 
-{% block content %}
-  <div id="message"></div>
+</head>
+
+<body>
+
+  <h3><span id="message"></span></h3>
 
   <div id="container" class="demo">
     <input v-model="currentView" type="radio" value="show-menu" id="show-menu" name="currentView"><label for="show-menu">show-menu</label>
     <input v-model="currentView" type="radio" value="show-image" id="show-image" name="currentView"><label for="show-image">show-image</label>
     <my-component :is="currentView" transition="fade" transition-mode="out-in"></my-component>
   </div>
-{% end %}
 
-{% block footer %}
-{% end %}
+  <iframe src="" id="iframe">
+    <p>Application Error</p>
+  </iframe>
 
-{% block tail_script %}
+  <script type='text/javascript' src='https://code.jquery.com/jquery-2.2.1.min.js'></script>
   <script type='text/javascript' src="{{ static_url('js/socket.js') }}"></script>
-  <script type='text/javascript' src="{{ static_url('js/input.js') }}"></script>
-{% end %}
+
+</body>
+
+</html>

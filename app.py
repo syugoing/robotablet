@@ -9,46 +9,49 @@ import tornado.websocket
 
 robot_waiters = set()  # list of robots
 tablet_waiters = set()  # list of tablets
+modes = ['show_image', 'show_menu']  # list of selectable modes
 
 
 class RobotHttpHandler(tornado.web.RequestHandler):
 
     @tornado.web.asynchronous
+    # GET /http?mode=:mode
     def get(self, *args):
         """Invoked from robot in arbitrary timing."""
 
         self.finish({'status': 'ok'})  # dummy response
 
-        mode = self.get_argument('mode', default=None)
+        mode = self.get_argument('mode')
+        image = self.get_argument('image', default=None)
 
-        contents = {}
-        contents['mode'] = mode
-
-        if mode == 'show_html':
-            html = self.get_argument('html', default=None)
-            contents['html'] = html
-
-        elif mode == 'show_image':
-            image = self.get_argument('image', default=None)
-            contents['image'] = image
-
+        contents = {"mode": mode, "image": image}
         contents = json.dumps(contents)
 
-        for tablet in tablet_waiters:
-            tablet.write_message(contents)
+        if mode in modes:
+            for tablet in tablet_waiters:
+                tablet.write_message(contents)
 
 
 class TabletIndexHandler(tornado.web.RequestHandler):
-
+    # GET /
     def get(self):
         """Invoked from tablet to display index page."""
         self.render('tablet.html')
 
 
-class TabletShowMenuHandler(tornado.web.RequestHandler):
-
+class TabletIframeHandler(tornado.web.RequestHandler):
+    # GET /iframe?mode=:mode
     def get(self):
-        self.render("show_menu.html")
+        """Invoked from parent page of tablet for iframe"""
+
+        mode = self.get_argument('mode')
+        image = self.get_argument('image', default=None)
+
+        if mode == 'show_image':
+            self.render(mode + '.html', image=image)
+
+        elif mode in modes:
+            self.render(mode + '.html')
 
 
 class TabletSocketHandler(tornado.websocket.WebSocketHandler):
@@ -88,7 +91,7 @@ class Application(tornado.web.Application):
 
             # from Tablet
             (r'/', TabletIndexHandler),
-            (r'/show_menu', TabletShowMenuHandler),
+            (r'/iframe', TabletIframeHandler),
             (r'/ts', TabletSocketHandler),
         ]
         settings = dict(
