@@ -12,6 +12,10 @@ var max_retry_attempts = 120;
 
 var url = 'ws://' + location.host + '/ts';
 
+function sendAction(msg) {
+    socket.send(JSON.stringify(msg));
+}
+
 var wsStart = function() {
 
   if (socket === null) {
@@ -43,12 +47,16 @@ var wsStart = function() {
       console.log(json);
       var mode = json.mode;
       var image = json.image;
+      console.log(mode);
 
       $message.attr('class', 'label label-primary');
       $message.text('recieved');
 
       if (mode == "hide_iframe") {
         $iframe.attr('src', null);
+
+      } else if (mode == "stay_iframe") {
+        // NOP
 
       } else if (mode == "show_image") {
         $iframe.attr('src', '/iframe?mode=' + mode + '&image=' + image);

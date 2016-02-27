@@ -6,10 +6,12 @@ import tornado.ioloop
 import tornado.options
 import tornado.web
 import tornado.websocket
+import logging
 
 robot_waiters = set()  # list of robots
 tablet_waiters = set()  # list of tablets
-modes = ['show_image', 'show_menu', 'hide_iframe']  # list of selectable modes
+modes = ['show_image', 'show_menu', 'hide_iframe',
+         'stay_iframe']  # list of selectable modes
 
 
 class RobotHttpHandler(tornado.web.RequestHandler):
@@ -24,7 +26,7 @@ class RobotHttpHandler(tornado.web.RequestHandler):
         mode = self.get_argument('mode')
         image = self.get_argument('image', default=None)
 
-        contents = {"mode": mode, "image": image}
+        contents = {'mode': mode, 'image': image}
         contents = json.dumps(contents)
 
         if mode in modes:
@@ -34,6 +36,7 @@ class RobotHttpHandler(tornado.web.RequestHandler):
 
 class TabletIndexHandler(tornado.web.RequestHandler):
     # GET /
+
     def get(self):
         """Invoked from tablet to display index page."""
         self.render('tablet.html')
@@ -41,8 +44,9 @@ class TabletIndexHandler(tornado.web.RequestHandler):
 
 class TabletIframeHandler(tornado.web.RequestHandler):
     # GET /iframe?mode=:mode
+
     def get(self):
-        """Invoked from parent page of tablet for iframe"""
+        """Invoked from parent page of tablet for iframe."""
 
         mode = self.get_argument('mode')
         image = self.get_argument('image', default=None)
@@ -50,12 +54,12 @@ class TabletIframeHandler(tornado.web.RequestHandler):
         if mode == 'show_image':
             self.render(mode + '.html', image=image)
 
-        elif mode != "hide_iframe" and mode in modes:
+        elif mode not in ['hide_iframe', 'stay_iframe'] and mode in modes:
             self.render(mode + '.html')
 
 
 class TabletSocketHandler(tornado.websocket.WebSocketHandler):
-    commands = []
+    contents = []
 
     def open(self):
         """Invoked when a new WebSocket is opened."""
@@ -63,17 +67,17 @@ class TabletSocketHandler(tornado.websocket.WebSocketHandler):
         if self not in tablet_waiters:
             tablet_waiters.add(self)
 
-    def on_message(self, message):
+    def on_message(self, contents):
         """Handle incoming messages on the WebSocket."""
 
-        message = json.loads(message)
+        contents = json.loads(contents)
 
-        self.commands.append(message)
+        self.contents.append(contents)
         for robot in robot_waiters:
-            robot.write_message(message)
+            robot.write_message(contents)
 
         for tablet in tablet_waiters:
-            tablet.write_message(message)
+            tablet.write_message(contents)
 
     def on_close(self):
         """Invoked when the WebSocket is closed."""
