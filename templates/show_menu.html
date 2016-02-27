@@ -9,6 +9,13 @@ menu
 {% end %}
 
 {% block content %}
+
+<div id="transition-mode-demo" class="demo">
+  <input v-model="currentView" type="radio" value="show-menu" id="show-menu" name="currentView"><label for="show-menu">show-menu</label>
+  <input v-model="currentView" type="radio" value="show-image" id="show-image" name="currentView"><label for="show-image">show-image</label>
+  <my-component :is="currentView" transition="fade" transition-mode="out-in"></my-component>
+</div>
+
   <div id='app'>
 
     <div class='row'>
