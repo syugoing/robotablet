@@ -23,7 +23,7 @@ socket.onopen = function() {
 
   $message.attr('class', 'label label-success');
   $message.text('open');
-  $iframe.attr('src', null)
+  $iframe.attr('src', null);
 
 };
 
@@ -34,16 +34,16 @@ socket.onmessage = function(event) {
 
   var json = JSON.parse(event.data);
   console.log(json);
-  var mode = json.mode
-  var image = json.image
+  var mode = json.mode;
+  var image = json.image;
 
   $message.attr('class', 'label label-primary');
   $message.text('recieved');
 
   if (mode == "show_image") {
-      $iframe.attr('src', '/iframe?mode=' + mode + '&image=' + image)
+    $iframe.attr('src', '/iframe?mode=' + mode + '&image=' + image);
   } else {
-      $iframe.attr('src', '/iframe?mode=' + mode)
+    $iframe.attr('src', '/iframe?mode=' + mode);
   }
 
   // reset the tries back to 0 since we have a new connection opened.
