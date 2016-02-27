@@ -9,7 +9,7 @@ import tornado.websocket
 
 robot_waiters = set()  # list of robots
 tablet_waiters = set()  # list of tablets
-modes = ['show_image', 'show_menu']  # list of selectable modes
+modes = ['show_image', 'show_menu', 'hide_iframe']  # list of selectable modes
 
 
 class RobotHttpHandler(tornado.web.RequestHandler):
@@ -50,7 +50,7 @@ class TabletIframeHandler(tornado.web.RequestHandler):
         if mode == 'show_image':
             self.render(mode + '.html', image=image)
 
-        elif mode in modes:
+        elif mode != "hide_iframe" and mode in modes:
             self.render(mode + '.html')
 
 

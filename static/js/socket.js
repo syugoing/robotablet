@@ -47,10 +47,15 @@ var wsStart = function() {
       $message.attr('class', 'label label-primary');
       $message.text('recieved');
 
-      if (mode == "show_image") {
+      if (mode == "hide_iframe") {
+        $iframe.attr('src', null);
+
+      } else if (mode == "show_image") {
         $iframe.attr('src', '/iframe?mode=' + mode + '&image=' + image);
+
       } else {
         $iframe.attr('src', '/iframe?mode=' + mode);
+
       }
 
       // reset the tries back to 0 since we have a new connection opened.
