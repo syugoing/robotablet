@@ -45,6 +45,12 @@ class TabletIndexHandler(tornado.web.RequestHandler):
         self.render('tablet.html')
 
 
+class TabletShowMenuHandler(tornado.web.RequestHandler):
+
+    def get(self):
+        self.render("show_menu.html")
+
+
 class TabletSocketHandler(tornado.websocket.WebSocketHandler):
     commands = []
 
@@ -63,6 +69,9 @@ class TabletSocketHandler(tornado.websocket.WebSocketHandler):
         for robot in robot_waiters:
             robot.write_message(message)
 
+        for tablet in tablet_waiters:
+            tablet.write_message(message)
+
     def on_close(self):
         """Invoked when the WebSocket is closed."""
 
@@ -79,6 +88,7 @@ class Application(tornado.web.Application):
 
             # from Tablet
             (r'/', TabletIndexHandler),
+            (r'/show_menu', TabletShowMenuHandler),
             (r'/ts', TabletSocketHandler),
         ]
         settings = dict(

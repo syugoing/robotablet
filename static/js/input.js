@@ -13,5 +13,11 @@ new Vue({
     }, {
       label: '④　徳島県'
     }]
+  },
+  methods: {
+    selectButton: function(index) {
+      sendAction(index);
+      alert(index);
+    }
   }
 });
