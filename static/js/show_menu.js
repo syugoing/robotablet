@@ -18,7 +18,7 @@ new Vue({
   methods: {
     selectButton: function(index) {
 
-      console.log('selectButton(' + index + ')');
+      console.log('selectButton(' + (index + 1) + ')');
 
       robotBehavior = {
         'tablet_action': 'select_menu',
