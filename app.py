@@ -12,10 +12,6 @@ import tornado.websocket
 actions = ['show_image', 'show_menu', 'hide_iframe',
            'stay_iframe']  # list of selectable actions
 
-robot_waiters = set()  # list of robots
-tablet_waiters = set()  # list of tablets
-ws_messages = []
-
 
 class RobotHttpHandler(tornado.web.RequestHandler):
 
@@ -35,16 +31,7 @@ class RobotHttpHandler(tornado.web.RequestHandler):
         ws_message = {'from': 'robot', 'to': 'tablet',
                       'tabletBehavior': tablet_behavior}
 
-        to = ws_message['to']
-
-        ws_messages.append(ws_message)
-
-        if to == 'tablet':
-            for tablet in tablet_waiters:
-                tablet.write_message(ws_message)
-
-        logging.info('sendmessage to {0} - tablets: {1}, robots: {2}'.format(
-            to, len(tablet_waiters), len(robot_waiters)))
+        SocketHandler.send_message(ws_message)
 
         self.finish({'status': 'ok'})
 
@@ -74,42 +61,48 @@ class TabletIframeHandler(tornado.web.RequestHandler):
 
 
 class SocketHandler(tornado.websocket.WebSocketHandler):
+    robot_waiters = set()  # list of robots
+    tablet_waiters = set()  # list of tablets
+    ws_messages = []
+
+    def check_origin(self, origin):
+        return True
 
     def open(self):
         """Invoked when a new WebSocket is opened."""
 
         logging.info('onopen - tablets: {0}, robots: {1}'.format(
-            len(tablet_waiters), len(robot_waiters)))
+            len(SocketHandler.tablet_waiters), len(SocketHandler.robot_waiters)))
 
     def on_message(self, ws_message):
         """Handle incoming messages on the WebSocket."""
 
-        self._send_message(ws_message)
-
-    def _send_message(self, ws_message):
-
         ws_message = json.loads(ws_message)
+        SocketHandler.send_message(ws_message)
+
+    @classmethod
+    def send_message(cls, ws_message):
+
         to = ws_message['to']
 
-        ws_messages.append(ws_message)
+        cls.ws_messages.append(ws_message)
 
         if to == 'robot':
-            for robot in robot_waiters:
+            for robot in cls.robot_waiters:
                 robot.write_message(ws_message)
 
         elif to == 'tablet':
-            for tablet in tablet_waiters:
+            for tablet in cls.tablet_waiters:
                 tablet.write_message(ws_message)
 
         logging.info('onmessage to {0} - tablets: {1}, robots: {2}'.format(
-            to, len(tablet_waiters), len(robot_waiters)))
+            to, len(cls.tablet_waiters), len(cls.robot_waiters)))
 
+    def on_close(self):
+        """Invoked when the WebSocket is closed."""
 
-def on_close(self):
-    """Invoked when the WebSocket is closed."""
-
-    logging.info('onclose - tablets: {0}, robots: {1}'.format(
-        len(tablet_waiters), len(robot_waiters)))
+        logging.info('onclose - tablets: {0}, robots: {1}'.format(
+            len(SocketHandler.tablet_waiters), len(SocketHandler.robot_waiters)))
 
 
 class TabletSocketHandler(SocketHandler):
@@ -117,16 +110,16 @@ class TabletSocketHandler(SocketHandler):
     def open(self):
         """Invoked when a new WebSocket is opened."""
 
-        if self not in tablet_waiters:
-            tablet_waiters.add(self)
+        if self not in SocketHandler.tablet_waiters:
+            SocketHandler.tablet_waiters.add(self)
 
         super(TabletSocketHandler, self).open()
 
     def on_close(self):
         """Invoked when the WebSocket is closed."""
 
-        if self in tablet_waiters:
-            tablet_waiters.remove(self)
+        if self in SocketHandler.tablet_waiters:
+            SocketHandler.tablet_waiters.remove(self)
 
         super(TabletSocketHandler, self).on_close()
 
@@ -136,16 +129,16 @@ class RobotSocketHandler(SocketHandler):
     def open(self):
         """Invoked when a new WebSocket is opened."""
 
-        if self not in robot_waiters:
-            robot_waiters.add(self)
+        if self not in SocketHandler.robot_waiters:
+            SocketHandler.robot_waiters.add(self)
 
         super(RobotSocketHandler, self).open()
 
     def on_close(self):
         """Invoked when the WebSocket is closed."""
 
-        if self in robot_waiters:
-            robot_waiters.remove(self)
+        if self in SocketHandler.robot_waiters:
+            SocketHandler.robot_waiters.remove(self)
 
         super(RobotSocketHandler, self).on_close()
 
@@ -164,8 +157,10 @@ class Application(tornado.web.Application):
             (r'/ts', TabletSocketHandler),
         ]
         settings = dict(
+            cookie_secret='__TODO:_GENERATE_YOUR_OWN_RANDOM_VALUE_HERE__',
             template_path=os.path.join(os.path.dirname(__file__), 'templates'),
             static_path=os.path.join(os.path.dirname(__file__), 'static'),
+            xsrf_cookies=True,
         )
         tornado.web.Application.__init__(self, handlers, **settings)
 
