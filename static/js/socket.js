@@ -36,7 +36,8 @@ var wsStart = function() {
       $message.text('open');
 
       $iframe.attr('class', 'onopen');
-      $iframe.attr('src', null);
+//      $iframe.attr('src', '');
+      $iframe.removeAttr('src')
 
     };
 
@@ -57,7 +58,8 @@ var wsStart = function() {
       $iframe.attr('class', 'onmessage');
 
       if (mode == "hide_iframe") {
-        $iframe.attr('src', null);
+        // $iframe.attr('src', '');
+        $iframe.removeAttr('src')
 
       } else if (mode == "stay_iframe") {
         // NOP

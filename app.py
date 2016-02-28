@@ -6,7 +6,6 @@ import tornado.ioloop
 import tornado.options
 import tornado.web
 import tornado.websocket
-import logging
 
 robot_waiters = set()  # list of robots
 tablet_waiters = set()  # list of tablets
@@ -49,9 +48,9 @@ class TabletIframeHandler(tornado.web.RequestHandler):
         """Invoked from parent page of tablet for iframe."""
 
         mode = self.get_argument('mode')
-        image = self.get_argument('image', default=None)
 
         if mode == 'show_image':
+            image = self.get_argument('image', default='default.png')
             self.render(mode + '.html', image=image)
 
         elif mode not in ['hide_iframe', 'stay_iframe'] and mode in modes:

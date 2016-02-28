@@ -11,7 +11,7 @@ image
 {% block content %}
   <div id='app'>
     <div class='row'>
-      <img src='{{ image }}'>
+      <img src="{{ static_url('uploads/') }}{{ image }}">
     </div>
   </div>
 {% end %}
