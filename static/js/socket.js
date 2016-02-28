@@ -34,6 +34,8 @@ var wsStart = function() {
 
       $message.attr('class', 'label label-success');
       $message.text('open');
+
+      $iframe.attr('class', 'onopen');
       $iframe.attr('src', null);
 
     };
@@ -51,6 +53,8 @@ var wsStart = function() {
 
       $message.attr('class', 'label label-primary');
       $message.text('recieved');
+
+      $iframe.attr('class', 'onmessage');
 
       if (mode == "hide_iframe") {
         $iframe.attr('src', null);
@@ -79,6 +83,8 @@ var wsStart = function() {
       $message.attr('class', 'label label-important');
       $message.text('closed');
 
+      $iframe.attr('class', 'onclose');
+
       if (retry_attempts < max_retry_attempts) {
         // Connection has closed so try to reconnect.
         retry_attempts++;
@@ -102,6 +108,9 @@ var wsStart = function() {
 
       $message.attr('class', 'label label-warning');
       $message.text('error occurred');
+
+      $iframe.attr('class', 'onerror');
+
     };
 
   }

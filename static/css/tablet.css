@@ -2,15 +2,36 @@ body {
   background-color: #222222;
   color: #FFFFFF;
 }
-html, body, iframe {
+html, body ,iframe {
+  height: 100%;
+}
+html, body {
   margin: 0;
   padding: 0;
-  height: 100%;
 }
 iframe {
   display: block;
   width: 100%;
-  border: none;
+  margin: 0px;
+  overflow: hidden;
+}
+iframe.default {
+  border: 1px #ecf0f1 solid; // CLOUDS (WHITE)
+}
+iframe.noconnection {
+  border: 1px #ecf0f1 solid; // CLOUDS (WHITE)
+}
+iframe.onopen {
+  border: 1px #3498db solid; // PETER RIVER (BLUE)
+}
+iframe.onmessage {
+  border: 1px #16a085 solid; // GREEN SEA
+}
+iframe.onerorr {
+  border: 1px #c0392b solid; // POMEGRANATE (RED)
+}
+iframe.onclose {
+  border: 1px #f39c12 solid; // ORANGE
 }
 .h1, .h2, .h3, .h4, .h5, .h6, h1, h2, h3, h4, h5, h6 {
   margin-top: 0px;

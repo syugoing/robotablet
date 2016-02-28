@@ -14,17 +14,9 @@
 
 <body>
 
-  <h3><span id="message"></span></h3>
+  <!--<h3><span id="message"></span></h3>-->
 
-  <div id="container" class="demo">
-    <input v-model="currentView" type="radio" value="show-menu" id="show-menu" name="currentView">
-    <label for="show-menu">show-menu</label>
-    <input v-model="currentView" type="radio" value="show-image" id="show-image" name="currentView">
-    <label for="show-image">show-image</label>
-    <my-component :is="currentView" transition="fade" transition-mode="out-in"></my-component>
-  </div>
-
-  <iframe src="" id="iframe">
+  <iframe src="" id="iframe" class="default" scrolling="no" marginwidth="0" marginheight="0" frameborder="0" seamless>
     <p>Application Error</p>
   </iframe>
 
