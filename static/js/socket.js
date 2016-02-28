@@ -1,9 +1,9 @@
 $(document).ready(function() {
-    if (!window.console) window.console = {};
-    if (!window.console.log) window.console.log = function() {};
+  if (!window.console) window.console = {};
+  if (!window.console.log) window.console.log = function() {};
 
-    console.log("ready");
-    wsStart();
+  console.log("ready");
+  wsStart();
 });
 
 var socket = null;
@@ -12,8 +12,15 @@ var max_retry_attempts = 120;
 
 var url = 'ws://' + location.host + '/ts';
 
-function sendAction(msg) {
-    socket.send(JSON.stringify(msg));
+function sendAction(ws_contents) {
+  ws_message = {
+    'from': 'tablet',
+    'to': 'robot',
+    'ws_contents': ws_contents
+  };
+
+  console.log('socket.send(' + JSON.stringify(ws_message) + ')');
+  socket.send(JSON.stringify(ws_message));
 }
 
 var wsStart = function() {
@@ -21,10 +28,7 @@ var wsStart = function() {
   if (socket === null) {
 
     socket = new WebSocket(url);
-
-    var $message = $('#message');
     var $iframe = $('#iframe');
-
     console.log(url);
 
     // onopen
@@ -32,12 +36,8 @@ var wsStart = function() {
     socket.onopen = function() {
       console.log('onopen');
 
-      $message.attr('class', 'label label-success');
-      $message.text('open');
-
       $iframe.attr('class', 'onopen');
-//      $iframe.attr('src', '');
-      $iframe.removeAttr('src')
+      $iframe.removeAttr('src');
 
     };
 
@@ -47,29 +47,36 @@ var wsStart = function() {
       console.log('onmessage');
 
       var json = JSON.parse(event.data);
-      console.log(json);
-      var mode = json.mode;
-      var image = json.image;
-      console.log(mode);
 
-      $message.attr('class', 'label label-primary');
-      $message.text('recieved');
+      var from = json.from;
+      var to = json.to;
+      var ws_contents = json.ws_contents;
+      var mode = ws_contents.mode;
+      console.log(mode);
 
       $iframe.attr('class', 'onmessage');
 
-      if (mode == "hide_iframe") {
-        // $iframe.attr('src', '');
-        $iframe.removeAttr('src')
+      if (to == "tablet") {
+        if (mode == "hide_iframe") {
+          $iframe.removeAttr('src');
 
-      } else if (mode == "stay_iframe") {
-        // NOP
+        } else if (mode == "stay_iframe") {
+          // NOP
 
-      } else if (mode == "show_image") {
-        $iframe.attr('src', '/iframe?mode=' + mode + '&image=' + image);
+        } else if (mode == "show_image") {
+          var image = ws_contents.image;
+          if (image === null) {
+            $iframe.attr('src', '/iframe?mode=' + mode);
 
-      } else {
-        $iframe.attr('src', '/iframe?mode=' + mode);
+          } else {
+            $iframe.attr('src', '/iframe?mode=' + mode + '&image=' + image);
 
+          }
+
+        } else {
+          $iframe.attr('src', '/iframe?mode=' + mode);
+
+        }
       }
 
       // reset the tries back to 0 since we have a new connection opened.
@@ -81,9 +88,6 @@ var wsStart = function() {
     // When tablet page closed.
     socket.onclose = function(event) {
       console.log('onclose. reason: %s', event.reason);
-
-      $message.attr('class', 'label label-important');
-      $message.text('closed');
 
       $iframe.attr('class', 'onclose');
 
@@ -107,9 +111,6 @@ var wsStart = function() {
     // When error occurred.
     socket.onerror = function(event) {
       console.log('onerror');
-
-      $message.attr('class', 'label label-warning');
-      $message.text('error occurred');
 
       $iframe.attr('class', 'onerror');
 

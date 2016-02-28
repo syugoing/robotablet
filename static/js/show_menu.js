@@ -6,19 +6,25 @@ new Vue({
   data: {
     menu_id: 101,
     btns: [{
-      label: '①　愛媛県'
+      label: '1. Ehime'
     }, {
-      label: '②　香川県'
+      label: '2. Kagawa'
     }, {
-      label: '③　高知県'
+      label: '3. Kochi'
     }, {
-      label: '④　徳島県'
+      label: '4. Tokushima'
     }]
   },
   methods: {
     selectButton: function(index) {
-      contents = {'mode': 'stay_iframe', 'menu_id': this.menu_id, 'index': index};
-      window.parent.sendAction(contents);
+      ws_contents = {
+        'mode': 'stay_iframe',
+        'menu_id': this.menu_id,
+        'index': index
+      };
+      console.log('selectButton(index)');
+
+      window.parent.sendAction(ws_contents);
     }
   }
 });
