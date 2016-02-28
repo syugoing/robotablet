@@ -19,7 +19,6 @@ function sendAction(ws_contents) {
     'ws_contents': ws_contents
   };
 
-  console.log('socket.send(' + JSON.stringify(ws_message) + ')');
   socket.send(JSON.stringify(ws_message));
 }
 

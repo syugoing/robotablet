@@ -22,7 +22,6 @@ new Vue({
         'menu_id': this.menu_id,
         'index': index
       };
-      console.log('selectButton(index)');
 
       window.parent.sendAction(ws_contents);
     }
