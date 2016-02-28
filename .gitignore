@@ -69,13 +69,8 @@ target/
 # IPython Notebook
 .ipynb_checkpoints
 
-# pyenv
-.python-version
-
-
 # virtualenv
 .venv/
 
 # PyCharm
 .idea/
-
