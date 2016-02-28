@@ -9,8 +9,8 @@ import tornado.options
 import tornado.web
 import tornado.websocket
 
-modes = ['show_image', 'show_menu', 'hide_iframe',
-         'stay_iframe']  # list of selectable modes
+actions = ['show_image', 'show_menu', 'hide_iframe',
+           'stay_iframe']  # list of selectable actions
 
 robot_waiters = set()  # list of robots
 tablet_waiters = set()  # list of tablets
@@ -20,20 +20,20 @@ ws_messages = []
 class RobotHttpHandler(tornado.web.RequestHandler):
 
     @tornado.web.asynchronous
-    # GET /http?mode=:mode
+    # GET /http?action=:action
     def get(self, *args):
         """Invoked from robot in arbitrary timing."""
 
-        mode = self.get_argument('mode')
+        action = self.get_argument('action')
         image = self.get_argument('image', default=None)
 
-        if mode not in modes:
+        if action not in actions:
             self.finish({'status': 'ng'})
             return
 
-        ws_contents = {'mode': mode, 'image': image}
+        tablet_behavior = {'action': action, 'image': image}
         ws_message = {'from': 'robot', 'to': 'tablet',
-                      'ws_contents': ws_contents}
+                      'tabletBehavior': tablet_behavior}
 
         to = ws_message['to']
 
@@ -42,6 +42,9 @@ class RobotHttpHandler(tornado.web.RequestHandler):
         if to == 'tablet':
             for tablet in tablet_waiters:
                 tablet.write_message(ws_message)
+
+        logging.info('sendmessage to {0} - tablets: {1}, robots: {2}'.format(
+            to, len(tablet_waiters), len(robot_waiters)))
 
         self.finish({'status': 'ok'})
 
@@ -55,19 +58,19 @@ class TabletIndexHandler(tornado.web.RequestHandler):
 
 
 class TabletIframeHandler(tornado.web.RequestHandler):
-    # GET /iframe?mode=:mode
+    # GET /iframe?action=:action
 
     def get(self):
         """Invoked from parent page of tablet for iframe."""
 
-        mode = self.get_argument('mode')
+        action = self.get_argument('action')
 
-        if mode == 'show_image':
+        if action == 'show_image':
             image = self.get_argument('image', default='default.png')
-            self.render(mode + '.html', image=image)
+            self.render(action + '.html', image=image)
 
-        elif mode not in ['hide_iframe', 'stay_iframe'] and mode in modes:
-            self.render(mode + '.html')
+        elif action not in ['hide_iframe', 'stay_iframe'] and action in actions:
+            self.render(action + '.html')
 
 
 class SocketHandler(tornado.websocket.WebSocketHandler):
@@ -81,12 +84,9 @@ class SocketHandler(tornado.websocket.WebSocketHandler):
     def on_message(self, ws_message):
         """Handle incoming messages on the WebSocket."""
 
-        self.send_message(ws_message)
+        self._send_message(ws_message)
 
-        logging.info('onmessage - tablets: {0}, robots: {1}'.format(
-            len(tablet_waiters), len(robot_waiters)))
-
-    def send_message(self, ws_message):
+    def _send_message(self, ws_message):
 
         ws_message = json.loads(ws_message)
         to = ws_message['to']
@@ -101,11 +101,15 @@ class SocketHandler(tornado.websocket.WebSocketHandler):
             for tablet in tablet_waiters:
                 tablet.write_message(ws_message)
 
-    def on_close(self):
-        """Invoked when the WebSocket is closed."""
+        logging.info('onmessage to {0} - tablets: {1}, robots: {2}'.format(
+            to, len(tablet_waiters), len(robot_waiters)))
 
-        logging.info('onclose - tablets: {0}, robots: {1}'.format(
-            len(tablet_waiters), len(robot_waiters)))
+
+def on_close(self):
+    """Invoked when the WebSocket is closed."""
+
+    logging.info('onclose - tablets: {0}, robots: {1}'.format(
+        len(tablet_waiters), len(robot_waiters)))
 
 
 class TabletSocketHandler(SocketHandler):

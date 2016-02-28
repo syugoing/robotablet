@@ -17,13 +17,16 @@ new Vue({
   },
   methods: {
     selectButton: function(index) {
-      ws_contents = {
-        'mode': 'stay_iframe',
+
+      console.log('selectButton(' + index + ')');
+
+      robotBehavior = {
+        'tablet_action': 'select_menu',
         'menu_id': this.menu_id,
-        'index': index
+        'selection_id': index + 1 // from 1 to len(selection)
       };
 
-      window.parent.sendAction(ws_contents);
+      window.parent.sendAction(robotBehavior);
     }
   }
 });

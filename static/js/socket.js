@@ -12,14 +12,14 @@ var max_retry_attempts = 120;
 
 var url = 'ws://' + location.host + '/ts';
 
-function sendAction(ws_contents) {
-  ws_message = {
+function sendAction(robotBehavior) {
+  wsMessage = {
     'from': 'tablet',
     'to': 'robot',
-    'ws_contents': ws_contents
+    'robotBehavior': robotBehavior
   };
 
-  socket.send(JSON.stringify(ws_message));
+  socket.send(JSON.stringify(wsMessage));
 }
 
 var wsStart = function() {
@@ -49,31 +49,29 @@ var wsStart = function() {
 
       var from = json.from;
       var to = json.to;
-      var ws_contents = json.ws_contents;
-      var mode = ws_contents.mode;
-      console.log(mode);
+      var tabletBehavior = json.tabletBehavior;
 
       $iframe.attr('class', 'onmessage');
 
       if (to == "tablet") {
-        if (mode == "hide_iframe") {
+        var action = tabletBehavior.action;
+        console.log(action);
+
+        if (action == "hide_iframe") {
           $iframe.removeAttr('src');
 
-        } else if (mode == "stay_iframe") {
-          // NOP
-
-        } else if (mode == "show_image") {
-          var image = ws_contents.image;
+        } else if (action == "show_image") {
+          var image = tabletBehavior.image;
           if (image === null) {
-            $iframe.attr('src', '/iframe?mode=' + mode);
+            $iframe.attr('src', '/iframe?action=' + action);
 
           } else {
-            $iframe.attr('src', '/iframe?mode=' + mode + '&image=' + image);
+            $iframe.attr('src', '/iframe?action=' + action + '&image=' + image);
 
           }
 
         } else {
-          $iframe.attr('src', '/iframe?mode=' + mode);
+          $iframe.attr('src', '/iframe?action=' + action);
 
         }
       }
