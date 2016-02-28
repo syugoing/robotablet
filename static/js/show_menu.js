@@ -17,7 +17,7 @@ new Vue({
   },
   methods: {
     selectButton: function(index) {
-      contents = {'mode': 'stay_iframe', 'menu_id': this.menu_id, 'index': index}
+      contents = {'mode': 'stay_iframe', 'menu_id': this.menu_id, 'index': index};
       window.parent.sendAction(contents);
     }
   }
