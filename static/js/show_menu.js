@@ -4,15 +4,15 @@ Vue.config.delimiters = ['${', '}'];
 new Vue({
   el: '#app',
   data: {
-    menu_id: 101,
+    menu_id: '101',
     btns: [{
-      label: '1. Ehime'
+      label: 'Ehime'
     }, {
-      label: '2. Kagawa'
+      label: 'Kagawa'
     }, {
-      label: '3. Kochi'
+      label: 'Kochi'
     }, {
-      label: '4. Tokushima'
+      label: 'Tokushima'
     }]
   },
   methods: {
@@ -21,9 +21,9 @@ new Vue({
       console.log('selectButton(' + (index + 1) + ')');
 
       robotBehavior = {
-        'tablet_action': 'select_menu',
-        'menu_id': this.menu_id,
-        'selection_id': index + 1 // from 1 to len(selection)
+        'tabletAction': 'select_menu',
+        'menuId': this.menu_id,
+        'selectionId': index + 1 // from 1 to len(selection)
       };
 
       window.parent.sendAction(robotBehavior);
