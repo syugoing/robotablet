@@ -12,7 +12,7 @@ image
   <div id='app'>
     <div class='row'>
       <div class="image">
-        <img src="{{ static_url('uploads/') }}{{ image }}">
+        <img src="{{ static_url('uploads/') if not image.startswith('http') else '' }}{{ image }}">
       </div>
     </div>
   </div>

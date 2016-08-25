@@ -41,7 +41,7 @@ class TabletIndexHandler(tornado.web.RequestHandler):
 
     def get(self):
         """Invoked from tablet to display index page."""
-        self.render('tablet.html')
+        self.render('tablet_frame.html')
 
 
 class TabletIframeHandler(tornado.web.RequestHandler):
