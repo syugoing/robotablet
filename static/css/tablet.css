@@ -2,8 +2,10 @@ body {
   background-color: #222222;
   color: #FFFFFF;
 }
-html, body ,iframe {
-  height: 100%;
+html, body {
+  // for ipad
+  width: 1024px;
+  height: 768px;
 }
 html, body {
   margin: 0;
@@ -12,34 +14,29 @@ html, body {
 iframe {
   display: block;
   width: 100%;
+  height: 100%;
   margin: 0px;
   overflow: hidden;
 }
 iframe.default {
-  border: 1px #ecf0f1 solid; // CLOUDS (WHITE)
+  border: 2px #ecf0f1 solid; // CLOUDS (WHITE)
 }
 iframe.noconnection {
-  border: 1px #ecf0f1 solid; // CLOUDS (WHITE)
+  border: 2px #ecf0f1 solid; // CLOUDS (WHITE)
 }
 iframe.onopen {
-  border: 1px #3498db solid; // PETER RIVER (BLUE)
+  border: 2px #3498db solid; // PETER RIVER (BLUE)
 }
 iframe.onmessage {
-  border: 1px #16a085 solid; // GREEN SEA
+  border: 2px #16a085 solid; // GREEN SEA
 }
 iframe.onerorr {
-  border: 1px #c0392b solid; // POMEGRANATE (RED)
+  border: 2px #c0392b solid; // POMEGRANATE (RED)
 }
 iframe.onclose {
-  border: 1px #f39c12 solid; // ORANGE
+  border: 2px #f39c12 solid; // ORANGE
 }
 .h1, .h2, .h3, .h4, .h5, .h6, h1, h2, h3, h4, h5, h6 {
   margin-top: 0px;
   margin-bottom: 0px;
-}
-.fade-transition {
-  transition: opacity .3s ease;
-}
-.fade-enter, .fade-leave {
-  opacity: 0;
 }
