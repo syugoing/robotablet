@@ -9,11 +9,8 @@ robotablet
 ## Requirement
 
 * [yyuu/pyenv](https://github.com/yyuu/pyenv)
-
 * [python 3.5.x (use pyenv)](https://github.com/shiraco/robotablet/blob/master/.python-version)
-
 * [pypa/virtualenv](https://github.com/pypa/virtualenv)
-
 * [python library](https://github.com/shiraco/robotablet/blob/master/rrequirements.txt)
 
 ## Install
