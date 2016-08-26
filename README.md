@@ -37,15 +37,19 @@ $ source .venv/bin/activate
 
 ## Usage
 
-Access tablet index page
+Access tablet index page from tablet page (or PC browser).
 http://localhost:3000/
+
+this is optimized for ipad 4th. when using another device, change width & height in tablet_frame.css .
 
 ### Action and Query
 
-### index
-GET http://localhost:3000/
+By doing below action, tablet display will change.
 
-### show_image
+#### action=show_image
+
+show image in tablet display.
+
 GET http://localhost:3000/q?action=show_image&image=[image_src]
 
 * [image_src]: image_src is file_path in dir of "/static/uploads/image/[image_src]" or external src.
@@ -54,7 +58,10 @@ e.q.:
 * http://localhost:3000/q?action=show_image&image=default.png
 * http://localhost:3000/q?action=show_image&image=https://ja.wikipedia.org/wiki/%E3%83%A1%E3%82%A4%E3%83%B3%E3%83%9A%E3%83%BC%E3%82%B8#/media/File:Yellow_Bittern_at_Hyoko_crop.jpg
 
-### show_menu
+#### action=show_menu
+
+show menu in tablet display.
+
 GET http://localhost:3000/q?action=show_menu&menu=[menu_id]
 
 * [menu_id]: menu_id is file_path in dir of "/static/uploads/menu/[menu_id].json"
@@ -62,7 +69,10 @@ GET http://localhost:3000/q?action=show_menu&menu=[menu_id]
 e.q.:
 * http://localhost:3000/q?action=show_menu&menu=101
 
-### hide_iframe
+#### action=hide_iframe
+
+hide image and menu in tablet display.
+
 GET http://localhost:3000/q?action=hide_iframe
 
 ## Licence
