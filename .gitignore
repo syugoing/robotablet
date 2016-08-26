@@ -76,5 +76,7 @@ target/
 .idea/
 
 # Tornado application
-static/uploads/*
-!static/uploads/default.png
+# static/uploads/image/*
+# !static/uploads/image/default.png
+# static/uploads/menu/*
+# !static/uploads/menu/default.json

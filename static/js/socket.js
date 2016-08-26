@@ -62,11 +62,21 @@ var wsStart = function() {
 
         } else if (action == "show_image") {
           var image = tabletBehavior.image;
-          if (image === null) {
-            $iframe.attr('src', '/iframe?action=' + action);
+          if (image) {
+            $iframe.attr('src', '/iframe?action=' + action + '&image=' + image);
 
           } else {
-            $iframe.attr('src', '/iframe?action=' + action + '&image=' + image);
+            $iframe.attr('src', '/iframe?action=' + action);
+
+          }
+
+        } else if (action == "show_menu") {
+          var menu = tabletBehavior.menu;
+          if (menu) {
+            $iframe.attr('src', '/iframe?action=' + action + '&menu=' + menu);
+
+          } else {
+            $iframe.attr('src', '/iframe?action=' + action);
 
           }
 

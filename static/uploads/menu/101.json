@@ -1,0 +1,13 @@
+{
+  "menuId": "101",
+  "title": "Where are you from?",
+  "btns": [{
+    "label": "Ehime"
+  }, {
+    "label": "Kagawa"
+  }, {
+    "label": "Kochi"
+  }, {
+    "label": "Tokushima"
+  }]
+}

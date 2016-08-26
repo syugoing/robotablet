@@ -9,55 +9,59 @@ import tornado.options
 import tornado.web
 import tornado.websocket
 
-actions = ['show_image', 'show_menu', 'hide_iframe',
-           'stay_iframe']  # list of selectable actions
+actions = ['show_image', 'show_menu', 'hide_iframe']  # list of selectable actions
 
 
-class RobotHttpHandler(tornado.web.RequestHandler):
+class QueryHandler(tornado.web.RequestHandler):
 
     @tornado.web.asynchronous
-    # GET /http?action=:action
+    # GET /query?action=:action
     def get(self, *args):
         """Invoked from robot in arbitrary timing."""
 
         action = self.get_argument('action')
         image = self.get_argument('image', default=None)
+        menu = self.get_argument('menu', default=None)
 
         if action not in actions:
-            self.finish({'status': 'ng'})
+            self.finish({'status': 'NG'})
             return
 
-        tablet_behavior = {'action': action, 'image': image}
+        tablet_behavior = {'action': action, 'image': image,
+                           'menu': menu}
         ws_message = {'from': 'robot', 'to': 'tablet',
                       'tabletBehavior': tablet_behavior}
 
         SocketHandler.send_message(ws_message)
 
-        self.finish({'status': 'ok'})
+        self.finish({'status': 'OK'})
 
 
 class TabletIndexHandler(tornado.web.RequestHandler):
-    # GET /
 
+    @tornado.web.asynchronous
+    # GET /
     def get(self):
         """Invoked from tablet to display index page."""
         self.render('tablet_frame.html')
 
 
 class TabletIframeHandler(tornado.web.RequestHandler):
-    # GET /iframe?action=:action
 
+    @tornado.web.asynchronous
+    # GET /iframe?action=:action
     def get(self):
         """Invoked from parent page of tablet for iframe."""
 
         action = self.get_argument('action')
 
         if action == 'show_image':
-            image = self.get_argument('image', default='default.png')
-            self.render(action + '.html', image=image)
+            image_src = self.get_argument('image', default='default.png')
+            self.render(action + '.html', image_src=image_src)
 
-        elif action not in ['hide_iframe', 'stay_iframe'] and action in actions:
-            self.render(action + '.html')
+        elif action == 'show_menu':
+            menu_id = self.get_argument('menu', default='default')
+            self.render(action + '.html', menu_id=menu_id)
 
 
 class SocketHandler(tornado.websocket.WebSocketHandler):
@@ -147,8 +151,10 @@ class Application(tornado.web.Application):
 
     def __init__(self):
         handlers = [
+            # from common
+            (r'/q', QueryHandler),
+
             # from Robot
-            (r'/http', RobotHttpHandler),
             (r'/rs', RobotSocketHandler),
 
             # from Tablet

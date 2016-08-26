@@ -1,32 +1,28 @@
 // Change delimiters not to conflict tornado.template delimiters.
 Vue.config.delimiters = ['${', '}'];
 
-new Vue({
-  el: '#app',
-  data: {
-    menu_id: '101',
-    btns: [{
-      label: 'Ehime'
-    }, {
-      label: 'Kagawa'
-    }, {
-      label: 'Kochi'
-    }, {
-      label: 'Tokushima'
-    }]
-  },
-  methods: {
-    selectButton: function(index) {
+var jsonPathDir = '/static/uploads/menu/';
+var jsonPath = jsonPathDir + menuId + '.json';
+var jqXHR = $.getJSON(jsonPath);
 
-      console.log('selectButton(' + (index + 1) + ')');
+jqXHR.done(function(menuJson) {
+  new Vue({
+    el: '#app',
+    data: menuJson,
 
-      robotBehavior = {
-        'tabletAction': 'select_menu',
-        'menuId': this.menu_id,
-        'selectionId': index + 1 // from 1 to len(selection)
-      };
+    methods: {
+      selectButton: function(index) {
 
-      window.parent.sendAction(robotBehavior);
+        console.log('selectButton(' + (index + 1) + ')');
+
+        robotBehavior = {
+          'tabletAction': 'select_menu',
+          'menuId': this.menuId,
+          'selectionId': index + 1 // from 1 to len(selection)
+        };
+
+        window.parent.sendAction(robotBehavior);
+      }
     }
-  }
+  });
 });

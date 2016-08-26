@@ -11,7 +11,7 @@ menu
 {% block content %}
   <div id='app'>
     <div class="maintext text-center">
-        <p>Which service do you want to know?</p>
+        <p>${ title }</p>
     </div>
     <div class='row'>
       <div class='menu'>
@@ -35,5 +35,8 @@ menu
 {% end %}
 
 {% block tail_script %}
+  <script type="text/javascript">
+    var menuId = "{{ menu_id }}";
+  </script>
   <script type='text/javascript' src="{{ static_url('js/show_menu.js') }}"></script>
 {% end %}

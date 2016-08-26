@@ -1,0 +1,9 @@
+{
+  "menuId": "102",
+  "title": "Which service do you want to know?",
+  "btns": [{
+    "label": "Tokyo"
+  }, {
+    "label": "Osaka"
+  }]
+}

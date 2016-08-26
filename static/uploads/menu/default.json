@@ -1,0 +1,13 @@
+{
+  "menuId": "default",
+  "title": "title?",
+  "btns": [{
+    "label": "btn1"
+  }, {
+    "label": "btn2"
+  }, {
+    "label": "btn3"
+  }, {
+    "label": "btn4"
+  }]
+}
